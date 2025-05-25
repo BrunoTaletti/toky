@@ -1,0 +1,13 @@
+# Ignora arquivos temporários
+*.log
+*.tmp
+
+# Ignora pastas
+__pycache__/
+
+# Ignora arquivos de ambiente
+tokens_data.json
+
+# Ignora arquivos do sistema
+.DS_Store
+Thumbs.db
