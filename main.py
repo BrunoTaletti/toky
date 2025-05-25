@@ -21,6 +21,10 @@ class BaseDialog(QDialog):
         super().__init__(parent)
         self.translator = translator
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        # Aplica o tema do pai se existir
+        if parent and hasattr(parent, 'current_theme'):
+            theme = ThemeManager.load_theme(parent.current_theme)
+            self.setStyleSheet(theme)
 
 class AddTokenDialog(BaseDialog):
     """Diálogo para adicionar um novo token 2FA"""
@@ -40,18 +44,6 @@ class AddTokenDialog(BaseDialog):
         self.btn_save = QPushButton(self.translator.get("save_btn"))
         self.btn_save.setIcon(QIcon(UIConfig.ICON_PATHS["add"]))
         self.btn_save.clicked.connect(self.validate_and_accept)
-
-        self.theme_selector = QComboBox()
-        self.theme_selector.addItem(
-            QIcon(UIConfig.ICON_PATHS["sun"]), 
-            f" {self.translator.get('light_theme')}"  # Espaço para separar ícone do texto
-        )
-        self.theme_selector.addItem(
-            QIcon(UIConfig.ICON_PATHS["moon"]),
-            f" {self.translator.get('dark_theme')}"
-        )
-        self.theme_selector.setCurrentIndex(1)  # Tema escuro por padrão
-        self.theme_selector.currentIndexChanged.connect(self.toggle_theme)
         
         layout.addWidget(QLabel(self.translator.get("service_name_label")))
         layout.addWidget(self.service_name)
@@ -207,12 +199,23 @@ class MainWindow(QMainWindow):
     """Janela principal da aplicação"""
     def __init__(self):
         super().__init__()
+        self.setWindowIcon(QIcon(os.path.join(BASE_DIR, "app-icon.ico")))
         self.current_theme = "dark"
         self.translator = UIConfig.init_translator()
         self.tokens = []
         self.setup_ui()
         self.load_tokens()
         self.apply_theme()
+
+        # Isso ajuda a garantir que o ícone apareça na barra de tarefas no Windows
+        if sys.platform == 'win32':
+            import ctypes
+            myappid = 'toky.2fa.manager.1'  # Pode ser qualquer string única
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
+        # Para sistemas Unix-like
+        if not sys.platform == 'win32':
+            self.setWindowIcon(QIcon(os.path.join(BASE_DIR, "app-icon.png")))
 
     def setup_ui(self):
         self.setWindowTitle(self.translator.get("app_title"))
