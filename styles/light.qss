@@ -110,9 +110,33 @@ QScrollBar::handle:vertical {
     border-radius: 5px;
 }
 
+/* Estilo para QMessageBox */
 QMessageBox {
     background-color: #F2F2F7;
     color: #000000;
+    border-radius: 10px;
+}
+
+QMessageBox QLabel {
+    background-color: transparent;
+    color: #000000;
+}
+
+QMessageBox QPushButton {
+    background-color: #3578FC;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 8px 16px;
+    min-width: 80px;
+    font-weight: bold;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #2A60C4;
+}
+
+QMessageBox QPushButton:pressed {
+    background-color: #1F4C9C;
 }
 
 QLabel#error_label {
