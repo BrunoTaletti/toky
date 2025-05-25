@@ -28,5 +28,7 @@
     "error": "Erro",
     "error_loading_translations": "Erro ao carregar traduções",
     "error_saving_tokens": "Erro ao salvar tokens",
-    "error_loading_tokens": "Erro ao carregar tokens"
+    "error_loading_tokens": "Erro ao carregar tokens",
+    "light_theme": "Claro",
+    "dark_theme": "Escuro"
 }

@@ -128,6 +128,7 @@ QLabel#success_label {
 /* Seletor de tema */
 QComboBox#theme_selector {
     padding: 5px;
+    spacing: 10px;
     border-radius: 15px;
     min-width: 60px;
     background-color: #252540;

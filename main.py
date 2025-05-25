@@ -40,6 +40,18 @@ class AddTokenDialog(BaseDialog):
         self.btn_save = QPushButton(self.translator.get("save_btn"))
         self.btn_save.setIcon(QIcon(UIConfig.ICON_PATHS["add"]))
         self.btn_save.clicked.connect(self.validate_and_accept)
+
+        self.theme_selector = QComboBox()
+        self.theme_selector.addItem(
+            QIcon(UIConfig.ICON_PATHS["sun"]), 
+            f" {self.translator.get('light_theme')}"  # Espaço para separar ícone do texto
+        )
+        self.theme_selector.addItem(
+            QIcon(UIConfig.ICON_PATHS["moon"]),
+            f" {self.translator.get('dark_theme')}"
+        )
+        self.theme_selector.setCurrentIndex(1)  # Tema escuro por padrão
+        self.theme_selector.currentIndexChanged.connect(self.toggle_theme)
         
         layout.addWidget(QLabel(self.translator.get("service_name_label")))
         layout.addWidget(self.service_name)
@@ -189,7 +201,7 @@ class TokenItemWidget(QWidget):
     def update_display(self):
         self.code_label.setText(self.totp.now())
         remaining = 30 - datetime.now().second % 30
-        self.time_label.setText(f"expira em {remaining}s")
+        self.time_label.setText(self.translator.get("expires_in").format(seconds=remaining))
 
 class MainWindow(QMainWindow):
     """Janela principal da aplicação"""
@@ -219,8 +231,14 @@ class MainWindow(QMainWindow):
         self.language_selector.currentIndexChanged.connect(self.change_language)
         
         self.theme_selector = QComboBox()
-        self.theme_selector.addItem(QIcon(UIConfig.ICON_PATHS["sun"]), "")
-        self.theme_selector.addItem(QIcon(UIConfig.ICON_PATHS["moon"]), "")
+        self.theme_selector.addItem(
+            QIcon(UIConfig.ICON_PATHS["sun"]), 
+            f" {self.translator.get('light_theme')}"  # Texto traduzido para o tema claro
+        )
+        self.theme_selector.addItem(
+            QIcon(UIConfig.ICON_PATHS["moon"]),
+            f" {self.translator.get('dark_theme')}"   # Texto traduzido para o tema escuro
+        )
         self.theme_selector.setCurrentIndex(1)  # Tema escuro por padrão
         self.theme_selector.currentIndexChanged.connect(self.toggle_theme)
         
@@ -254,13 +272,25 @@ class MainWindow(QMainWindow):
         languages = {
             "en_US": ("us", "english"),
             "pt_BR": ("br", "portuguese"),
-            "es_ES": ("es", "spanish"),
+            "es_ES": ("es", "spanish"), 
             "ru_RU": ("ru", "russian")
         }
         
-        for lang_code, (flag, lang_key) in languages.items():
+        # Bloqueia sinais durante a atualização
+        self.language_selector.blockSignals(True)
+        self.language_selector.clear()
+        
+        current_lang = getattr(self.translator, 'lang', 'en_US')
+        current_index = 0
+        
+        for i, (lang_code, (flag, lang_key)) in enumerate(languages.items()):
             flag_path = os.path.join(BASE_DIR, "resources", "flags", f"{flag}.png")
             self.language_selector.addItem(QIcon(flag_path), self.translator.get(lang_key))
+            if lang_code == current_lang:
+                current_index = i
+        
+        self.language_selector.setCurrentIndex(current_index)
+        self.language_selector.blockSignals(False)
 
     def toggle_theme(self, index):
         self.current_theme = "light" if index == 0 else "dark"
@@ -276,13 +306,29 @@ class MainWindow(QMainWindow):
         languages = ["en_US", "pt_BR", "es_ES", "ru_RU"]
         if index < len(languages):
             try:
-                self.translator = Translator(languages[index])
+                # Bloqueia sinais temporariamente
+                self.language_selector.blockSignals(True)
+                
+                new_lang = languages[index]
+                if hasattr(self, 'translator') and self.translator.lang == new_lang:
+                    return
+                    
+                self.translator = Translator(new_lang)
                 self.reload_ui()
+                
+                # Atualiza todos os TokenItemWidget com o novo tradutor
+                for i in range(self.list_widget.count()):
+                    widget = self.list_widget.itemWidget(self.list_widget.item(i))
+                    if widget:
+                        widget.translator = self.translator
+                
             except Exception as e:
                 print(f"Error changing language: {e}")
                 self.language_selector.setCurrentIndex(0)
                 self.translator = Translator("en_US")
                 self.reload_ui()
+            finally:
+                self.language_selector.blockSignals(False)
 
     def reload_ui(self):
         self.setWindowTitle(self.translator.get("app_title"))
@@ -295,6 +341,23 @@ class MainWindow(QMainWindow):
                 widget.btn_copy.setToolTip(self.translator.get("copy_btn"))
                 widget.btn_edit.setToolTip(self.translator.get("edit_btn"))
                 widget.btn_delete.setToolTip(self.translator.get("delete_btn"))
+        
+        # Atualiza os nomes dos idiomas no seletor
+        self.load_language_flags()
+        
+        # Atualiza textos do seletor de tema
+        current_theme_index = self.theme_selector.currentIndex()
+        self.theme_selector.blockSignals(True)
+        self.theme_selector.setItemText(0, f" {self.translator.get('light_theme')}")
+        self.theme_selector.setItemText(1, f" {self.translator.get('dark_theme')}")
+        self.theme_selector.setCurrentIndex(current_theme_index)
+        self.theme_selector.blockSignals(False)
+        
+        # Mantém a seleção atual do idioma
+        current_lang = self.translator.lang
+        languages = ["en_US", "pt_BR", "es_ES", "ru_RU"]
+        if current_lang in languages:
+            self.language_selector.setCurrentIndex(languages.index(current_lang))
 
     def show_add_dialog(self):
         dialog = AddTokenDialog(self.translator, self)
@@ -336,7 +399,11 @@ class MainWindow(QMainWindow):
 
     def copy_code(self, code):
         QApplication.clipboard().setText(code)
-        QMessageBox.information(self, "Copied", f"Code {code} copied to clipboard")
+        QMessageBox.information(
+            self,
+            self.translator.get("copied"),
+            self.translator.get("code_copied").format(code=code)
+        )
 
     def edit_token(self, token_widget):
         item = None
@@ -364,8 +431,8 @@ class MainWindow(QMainWindow):
     def delete_token(self, token_widget):
         reply = QMessageBox.question(
             self,
-            "Confirm",
-            "Delete this token?",
+            self.translator.get("confirm"),
+            self.translator.get("delete_confirmation"),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         

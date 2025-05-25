@@ -28,5 +28,7 @@
     "error": "Error",
     "error_loading_translations": "Error loading translations",
     "error_saving_tokens": "Error saving tokens",
-    "error_loading_tokens": "Error loading tokens"
+    "error_loading_tokens": "Error loading tokens",
+    "light_theme": "Light",
+    "dark_theme": "Dark"
 }

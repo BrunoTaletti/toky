@@ -1,18 +1,17 @@
 /* Light Theme */
 QMainWindow, QDialog, QWidget {
     background-color: #FFFFFF;
-    color: #04030F;
+    color: #000000;
     font-family: Montserrat;
 }
 
 QFrame {
-    background-color: #F5F5F5;
-    border: 1px solid #3578FC;
+    background-color: #F2F2F7;
     border-radius: 8px;
 }
 
 QLabel {
-    color: #04030F;
+    color: #000000;
 }
 
 QLabel#code_label {
@@ -26,11 +25,11 @@ QWidget {
 }
 
 QLineEdit, QComboBox {
-    background-color: #E0E0E0;
+    background-color: #FFFFFF;
     border: 2px solid #3578FC;
     border-radius: 8px;
     padding: 10px;
-    color: #04030F;
+    color: #000000;
     font-size: 14px;
     selection-background-color: #3578FC;
 }
@@ -40,9 +39,9 @@ QLineEdit:focus, QComboBox:focus {
 }
 
 QLineEdit:disabled {
-    background-color: #F5F5F5;
+    background-color: #F2F2F7;
     color: #777777;
-    border-color: #E0E0E0;
+    border-color: #CCCCCC;
 }
 
 QPushButton {
@@ -65,7 +64,7 @@ QPushButton:pressed {
 }
 
 QCheckBox {
-    color: #04030F;
+    color: #000000;
     spacing: 8px;
 }
 
@@ -81,7 +80,7 @@ QCheckBox::indicator:checked {
 }
 
 QListWidget {
-    background-color: #F5F5F5;
+    background-color: #F2F2F7;
     border: 2px solid #3578FC;
     border-radius: 10px;
     padding: 10px;
@@ -90,16 +89,17 @@ QListWidget {
 
 QListWidget::item {
     background-color: transparent;
+    border-radius: 10px;
     padding: 10px;
 }
 
 QListWidget::item:hover {
-    background-color: #E0E0E0;
+    background-color: #E6E6F2;
 }
 
 QScrollBar:vertical {
     border: none;
-    background: #F5F5F5;
+    background: #F2F2F7;
     width: 10px;
     margin: 0px;
 }
@@ -111,8 +111,8 @@ QScrollBar::handle:vertical {
 }
 
 QMessageBox {
-    background-color: #F5F5F5;
-    color: #04030F;
+    background-color: #F2F2F7;
+    color: #000000;
 }
 
 QLabel#error_label {
@@ -128,10 +128,11 @@ QLabel#success_label {
 /* Seletor de tema */
 QComboBox#theme_selector {
     padding: 5px;
+    spacing: 10px;
     border-radius: 15px;
     min-width: 60px;
-    background-color: #E0E0E0;
-    color: #04030F;
+    background-color: #FFFFFF;
+    color: #000000;
     border: 2px solid #3578FC;
 }
 
@@ -139,19 +140,52 @@ QComboBox#theme_selector {
 QComboBox#language_selector {
     padding-left: 30px;
     min-width: 120px;
-    background-color: #E0E0E0;
-    color: #04030F;
+    background-color: #FFFFFF;
+    color: #000000;
     border: 2px solid #3578FC;
     border-radius: 8px;
 }
 
 QComboBox#language_selector::item {
     padding-left: 30px;
-    background-color: #E0E0E0;
-    color: #04030F;
+    background-color: #FFFFFF;
+    color: #000000;
 }
 
 QComboBox#language_selector::item:selected {
     background-color: #3578FC;
     color: #FFFFFF;
+}
+
+/* Estilo para os itens de token */
+TokenItemWidget {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+TokenItemWidget QLabel {
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+}
+
+TokenItemWidget #code_label {
+    color: #3578FC;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+TokenItemWidget QPushButton {
+    background-color: transparent;
+    border: none;
+    padding: 5px;
+    margin: 0;
+}
+
+TokenItemWidget QPushButton:hover {
+    background-color: #E6E6F2;
+    border-radius: 4px;
 }

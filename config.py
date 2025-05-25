@@ -32,9 +32,14 @@ class ThemeManager:
 
 class Translator:
     """Sistema de tradução"""
-    def __init__(self, lang="en_US"):
-        self.lang = lang
-        self.texts = self._load_translations()
+    _instances = {}  # Cache de instâncias
+
+    def __new__(cls, lang="en_US"):
+        if lang not in cls._instances:
+            cls._instances[lang] = super().__new__(cls)
+            cls._instances[lang].lang = lang
+            cls._instances[lang].texts = cls._instances[lang]._load_translations()
+        return cls._instances[lang]
     
     def _load_translations(self):
         translations = {}

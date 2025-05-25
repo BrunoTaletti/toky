@@ -28,5 +28,7 @@
     "error": "Ошибка",
     "error_loading_translations": "Ошибка при загрузке переводов",
     "error_saving_tokens": "Ошибка при сохранении токенов",
-    "error_loading_tokens": "Ошибка при загрузке токенов"
+    "error_loading_tokens": "Ошибка при загрузке токенов",
+    "light_theme": "Светлая",
+    "dark_theme": "Тёмная"
 }
