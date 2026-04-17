@@ -1,0 +1,12 @@
+[project]
+name = "toky"
+version = "1.0.0"
+description = "Gerenciador de tokens 2FA"
+dependencies = [
+    "PyQt6>=6.6.0",
+    "pyotp>=2.9.0"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

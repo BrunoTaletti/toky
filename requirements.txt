@@ -1,0 +1,4 @@
+PyQt6==6.11.0
+pyotp==2.9.0
+pyinstaller==6.19.0
+cryptography==46.0.7
